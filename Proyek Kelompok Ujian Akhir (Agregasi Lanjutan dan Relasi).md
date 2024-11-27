@@ -1,160 +1,149 @@
 # soal 1
-### **1. Struktur Database**
 
-#### **Tujuan**
+#### **1. Struktur Database**
 
-Database yang dirancang terdiri dari empat tabel utama yang saling berhubungan untuk mendukung sistem jadwal pelajaran. Keempat tabel tersebut adalah:
-
-- **Tabel `kelas`**:  
-    Menyimpan informasi tentang tingkat kelas dan nama kelas.
-- **Tabel `mata_pelajaran`**:  
-    Berisi data mengenai mata pelajaran beserta deskripsinya.
-- **Tabel `guru`**:  
-    Menyimpan data pribadi guru seperti NIP, nama, email, nomor telepon, dan alamat.
-- **Tabel `jadwal`**:  
-    Merupakan tabel penghubung yang berisi informasi jadwal pelajaran dan menghubungkan data guru serta mata pelajaran.
-
-#### **Kelebihan**
-
-- Struktur database ini mengikuti prinsip normalisasi untuk meminimalisir redundansi data.
-- Menggunakan _foreign key_ untuk menjaga hubungan antar tabel dan memastikan data yang konsisten.
-- Penggunaan constraint pada domain data, seperti email yang harus unik, membantu menghindari entri duplikat.
-
-#### **Kelemahan**
-
-- Jika ada perubahan besar pada kurikulum atau pembagian kelas, struktur tabel `jadwal` mungkin perlu disesuaikan lagi.
-
----
-
-### **2. Tabel `kelas`**
-
-#### **Struktur**
-
-```sql
-CREATE TABLE kelas (
-    id_kelas INT AUTO_INCREMENT PRIMARY KEY,
-    tingkat VARCHAR(10) NOT NULL,
-    nama_kelas VARCHAR(50) NOT NULL
-);
-```
-
-#### **Gambar**
-![](asset/1.PNG)
-
-#### **Analisis**
-
-- **Kolom `id_kelas`** digunakan sebagai primary key untuk memastikan setiap kelas memiliki identifikasi yang unik.
-- **Kolom `tingkat` dan `nama_kelas`** berfungsi untuk mencatat informasi jenjang pendidikan, misalnya kelas 10, 11, dan 12.
-
-#### **Potensi Perluasan**
-
-- Bisa ditambahkan atribut lain, seperti kapasitas kelas atau nama wali kelas.
-
----
-
-### **3. Tabel `mata_pelajaran`**
-
-#### **Struktur**
-
-```sql
-CREATE TABLE mata_pelajaran (
-    id_mapel INT AUTO_INCREMENT PRIMARY KEY,
-    nama_mapel VARCHAR(100) NOT NULL,
-    deskripsi TEXT
-);
-```
-
-#### **Gambar**
-![](asset/2.PNG)
-#### **Analisis**
-
-- **Kolom `id_mapel`** berfungsi sebagai primary key yang memberikan identifikasi unik untuk setiap mata pelajaran.
-- **Kolom `deskripsi`** memberikan ruang untuk informasi tambahan mengenai mata pelajaran tersebut.
-
-#### **Potensi Perluasan**
-
-- Bisa ditambahkan atribut seperti jumlah SKS atau kategori mata pelajaran (misalnya wajib atau pilihan).
-
----
-
-### **4. Tabel `guru`**
-
-#### **Struktur**
-
-```sql
-CREATE TABLE guru (
-    nip VARCHAR(20) PRIMARY KEY,
-    nama_guru VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    no_telpon VARCHAR(15),
-    alamat TEXT
-);
-```
-
-#### **Gambar**
-![](asset/3.PNG)
-#### **Analisis**
-
-- **Kolom `nip`** sebagai primary key menjamin bahwa setiap guru memiliki identifikasi yang unik sesuai dengan standar yang berlaku.
-- **Kolom `email`** memiliki constraint **UNIQUE** untuk mencegah penggunaan email yang sama oleh dua guru.
-- **Kolom `no_telpon` dan `alamat`** memberikan informasi tambahan yang diperlukan untuk kontak.
-
-#### **Kelebihan**
-
-- Tabel ini sudah cukup lengkap dengan data penting yang diperlukan untuk menghubungkan guru dengan jadwal pelajaran.
-
-#### **Kelemahan**
-
-- Format NIP yang mungkin mengalami perubahan standar dari waktu ke waktu bisa berisiko mengganggu keutuhan data.
-
----
-
-### **5. Tabel `jadwal`**
-
-#### **Struktur**
-
-```sql
-CREATE TABLE jadwal (
-    id_jadwal INT AUTO_INCREMENT PRIMARY KEY,
-    hari VARCHAR(15) NOT NULL,
-    jam_masuk TIME NOT NULL,
-    jam_keluar TIME NOT NULL,
-    id_guru VARCHAR(20) NOT NULL,
-    id_mapel INT NOT NULL,
-    FOREIGN KEY (id_guru) REFERENCES guru (nip) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_mapel) REFERENCES mata_pelajaran (id_mapel) ON DELETE CASCADE ON UPDATE CASCADE
-);
-```
-
-#### **Gambar**
-![](asset/4.PNG)
-
-#### **Analisis**
-
-- **Kolom `id_jadwal`** berfungsi sebagai primary key yang menjamin setiap jadwal memiliki identifikasi unik.
-- **Relasi dengan tabel `guru` dan `mata_pelajaran`** memastikan bahwa setiap jadwal terkait dengan guru dan mata pelajaran yang tepat.
-- **Constraint `ON DELETE CASCADE`** memastikan bahwa jika guru atau mata pelajaran dihapus, data jadwal terkait juga akan terhapus secara otomatis.
-
-#### **Kelemahan**
-
-- Tabel ini belum menyertakan atribut tambahan seperti lokasi kelas atau perangkat pembelajaran yang digunakan (misalnya proyektor).
-
----
-
-### **Kesimpulan**
-
-1. **Keunggulan**
+- **Tujuan**:  
+    Database yang dirancang terdiri dari empat tabel utama yang saling berhubungan untuk mendukung sistem jadwal pelajaran. Tabel-tabel tersebut adalah:
     
-    - Database ini dirancang dengan efisien, menjaga konsistensi antar tabel.
-    - Relasi antar tabel sangat mendukung sistem jadwal pelajaran yang diinginkan.
-    - Penggunaan constraint seperti **UNIQUE** dan **FOREIGN KEY** membantu menjaga integritas data secara otomatis.
-2. **Potensi Perbaikan**
+    - **Tabel `kelas`**: Menyimpan informasi tentang kelas, seperti tingkat dan nama kelas.
+    - **Tabel `mata_pelajaran`**: Berisi data mengenai mata pelajaran, termasuk deskripsi masing-masing mata pelajaran.
+    - **Tabel `guru`**: Menyimpan data pribadi guru, seperti NIP, nama, email, nomor telepon, dan alamat.
+    - **Tabel `jadwal`**: Merupakan tabel penghubung yang menyimpan informasi jadwal pelajaran yang menghubungkan data guru dan mata pelajaran.
+- **Kelebihan**:
     
-    - Menambahkan informasi tentang lokasi kelas atau perangkat pendukung pada tabel `jadwal` untuk keperluan lebih lanjut.
-    - Menambahkan kolom seperti kategori atau jumlah SKS pada tabel `mata_pelajaran` untuk mendukung analisis lebih mendalam terkait kurikulum.
+    - **Normalisasi**: Struktur database ini sudah mengikuti prinsip normalisasi, yang berarti mengurangi redundansi data dan meningkatkan efisiensi.
+    - **Foreign Key**: Penggunaan foreign key menghubungkan antar tabel dan memastikan data yang konsisten.
+    - **Constraints**: Dengan menggunakan constraints, seperti `UNIQUE` pada email guru, database ini dapat menghindari entri yang duplikat.
+- **Kelemahan**:
+    
+    - Jika terjadi perubahan besar dalam kurikulum atau pembagian kelas, maka tabel `jadwal` mungkin perlu diperbarui.
 
-Database yang kami buat diharapkan bisa digunakan dengan baik untuk sistem pengelolaan jadwal pelajaran yang lebih efisien di sekolah-sekolah di Makassar. Semoga dapat memberikan manfaat yang optimal bagi proses pembelajaran.
+---
 
+#### **2. Tabel `kelas`**
+
+- **Struktur**:
+    
+    ```sql
+    CREATE TABLE kelas (
+        id_kelas INT AUTO_INCREMENT PRIMARY KEY,
+        tingkat VARCHAR(10) NOT NULL,
+        nama_kelas VARCHAR(50) NOT NULL
+    );
+    ```
+
+Gambar
+![](asset/1.png)
+
+- **Analisis**:
+    
+    - **`id_kelas`**: Primary key untuk memastikan setiap kelas memiliki identifikasi unik.
+    - **`tingkat` dan `nama_kelas`**: Menyimpan informasi mengenai tingkat dan nama kelas, misalnya kelas 10, 11, atau 12.
+- **Potensi Perluasan**:
+    
+    - Kolom seperti kapasitas kelas atau nama wali kelas bisa ditambahkan untuk memperluas informasi yang tersedia.
+
+---
+
+#### **3. Tabel `mata_pelajaran`**
+
+- **Struktur**:
+    
+    ```sql
+    CREATE TABLE mata_pelajaran (
+        id_mapel INT AUTO_INCREMENT PRIMARY KEY,
+        nama_mapel VARCHAR(100) NOT NULL,
+        deskripsi TEXT
+    );
+    ```
+
+Gambar
+![](asset/2.png)
+
+- **Analisis**:
+    
+    - **`id_mapel`**: Sebagai primary key, setiap mata pelajaran mendapatkan identifikasi unik.
+    - **`deskripsi`**: Memberikan informasi tambahan tentang setiap mata pelajaran yang mungkin dibutuhkan oleh pengelola jadwal.
+- **Potensi Perluasan**:
+    
+    - Bisa menambahkan kolom seperti jumlah SKS atau kategori mata pelajaran (wajib atau pilihan) untuk analisis yang lebih mendalam.
+
+---
+
+#### **4. Tabel `guru`**
+
+- **Struktur**:
+    
+    ```sql
+    CREATE TABLE guru (
+        nip VARCHAR(20) PRIMARY KEY,
+        nama_guru VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        no_telpon VARCHAR(15),
+        alamat TEXT
+    );
+    ```
+
+Gambar
+![](asset/3.png)
+
+- **Analisis**:
+    
+    - **`nip`**: Primary key yang menjamin setiap guru memiliki identifikasi unik.
+    - **`email`**: Kolom ini memiliki constraint `UNIQUE` untuk memastikan tidak ada dua guru dengan email yang sama.
+    - **`no_telpon` dan `alamat`**: Memberikan informasi kontak tambahan yang berguna untuk menghubungi guru.
+- **Kelebihan**:
+    
+    - Informasi yang disediakan cukup lengkap dan relevan untuk keperluan sistem jadwal.
+- **Kelemahan**:
+    
+    - Format NIP yang mungkin berubah seiring waktu bisa mempengaruhi keutuhan data, terutama jika ada standar baru untuk NIP.
+
+---
+
+#### **5. Tabel `jadwal`**
+
+- **Struktur**:
+    
+    ```sql
+    CREATE TABLE jadwal (
+        id_jadwal INT AUTO_INCREMENT PRIMARY KEY,
+        hari VARCHAR(15) NOT NULL,
+        jam_masuk TIME NOT NULL,
+        jam_keluar TIME NOT NULL,
+        id_guru VARCHAR(20) NOT NULL,
+        id_mapel INT NOT NULL,
+        FOREIGN KEY (id_guru) REFERENCES guru (nip) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (id_mapel) REFERENCES mata_pelajaran (id_mapel) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+    ```
+
+Gambar
+![](asset/4.png)
+
+- **Analisis**:
+    
+    - **`id_jadwal`**: Primary key yang memastikan bahwa setiap entri jadwal memiliki identifikasi unik.
+    - **Relasi dengan Tabel `guru` dan `mata_pelajaran`**: Menghubungkan tabel `jadwal` dengan data guru dan mata pelajaran. Ini memastikan setiap jadwal terkait dengan guru dan mata pelajaran yang tepat.
+    - **`ON DELETE CASCADE`**: Jika guru atau mata pelajaran dihapus, jadwal yang terkait juga akan terhapus otomatis. Ini menjaga data tetap konsisten.
+- **Kelemahan**:
+    
+    - Tabel ini tidak mencakup atribut seperti lokasi kelas atau perangkat yang digunakan (misalnya proyektor) yang bisa berguna untuk informasi lebih lengkap.
+
+---
+
+#### **Kesimpulan**
+
+- **Keunggulan**:
+    
+    - Database ini dirancang dengan efisien, menjaga konsistensi data antar tabel. Penggunaan foreign key dan constraints seperti `UNIQUE` memberikan integritas yang kuat terhadap data.
+    - Sistem ini dapat mendukung pengelolaan jadwal pelajaran dengan baik karena relasi antar tabel yang jelas dan konsisten.
+- **Potensi Perbaikan**:
+    
+    - Bisa ditambahkan informasi lebih lanjut di tabel `jadwal` mengenai lokasi kelas atau perangkat pembelajaran yang digunakan.
+    - Tabel `mata_pelajaran` bisa diperluas dengan kolom tambahan seperti jumlah SKS atau kategori mata pelajaran untuk mempermudah analisis kurikulum.
+
+**Harapan**: Database yang telah dirancang ini diharapkan bisa digunakan dengan baik dalam pengelolaan sistem jadwal pelajaran yang efisien di sekolah-sekolah di Makassar, dan dapat memberikan manfaat optimal dalam mendukung proses pembelajaran.
 # soal 2
 ### **Analisis Contoh 1**
 
@@ -178,7 +167,7 @@ HAVING COUNT(j.id_mapel) > 0;
 - **HAVING COUNT(j.id_mapel) > 0**: Menyaring hasil kelompok data sehingga hanya menampilkan guru yang mengajar setidaknya satu mata pelajaran.
 
 **Hasil Query**:
-![](asset/5.PNG)
+![](asset/5.png)
 - Akan menampilkan nama-nama guru beserta jumlah mata pelajaran yang mereka ajarkan.
 - Guru yang tidak mengajar mata pelajaran apa pun tidak akan ditampilkan dalam hasil.
 
@@ -209,7 +198,7 @@ JOIN mata_pelajaran m ON j.id_mapel = m.id_mapel;
 - **JOIN mata_pelajaran m ON j.id_mapel = m.id_mapel**: Menghubungkan tabel `jadwal` dengan tabel `mata_pelajaran` berdasarkan kolom `id_mapel` di kedua tabel.
 
 **Hasil Query**:
-![](asset/6.PNG)
+![](asset/6.png)
 - Menampilkan daftar jadwal lengkap, termasuk informasi hari, jam masuk, jam keluar, nama guru yang mengajar, dan nama mata pelajaran.
 - Setiap baris hasil merepresentasikan satu entri jadwal dengan informasi terhubung dari tabel `guru` dan `mata_pelajaran`.
 
